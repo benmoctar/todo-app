@@ -5,7 +5,7 @@ const filterButtons = document.querySelectorAll(".filters button");
 
 let tasks = [];
 
-// Charger les tâches du localStorage au démarrage
+// Charger les tâches depuis localStorage au démarrage
 window.onload = () => {
   const saved = localStorage.getItem("tasks");
   if (saved) {
@@ -24,13 +24,13 @@ function addTask() {
   saveAndRender();
 }
 
-// Sauvegarder dans localStorage
+// Sauvegarder et réafficher
 function saveAndRender() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
   renderTasks();
 }
 
-// Afficher les tâches à l’écran
+// Afficher les tâches avec filtre
 function renderTasks(filter = "all") {
   list.innerHTML = "";
 
@@ -39,14 +39,18 @@ function renderTasks(filter = "all") {
       (filter === "active" && task.done) ||
       (filter === "done" && !task.done)
     ) {
-      return; // Skip
+      return;
     }
 
     const li = document.createElement("li");
 
     const span = document.createElement("span");
-    span.textContent = task.text;
-    if (task.done) span.classList.add("done");
+    if (task.done) {
+      span.classList.add("done");
+      span.innerHTML = `✅ ${task.text}`;
+    } else {
+      span.innerHTML = task.text;
+    }
 
     span.addEventListener("click", () => {
       tasks[index].done = !tasks[index].done;
@@ -67,7 +71,7 @@ function renderTasks(filter = "all") {
   });
 }
 
-// Filtrage
+// Filtres
 filterButtons.forEach((btn) => {
   btn.addEventListener("click", () => {
     const filter = btn.dataset.filter;
@@ -75,7 +79,7 @@ filterButtons.forEach((btn) => {
   });
 });
 
-// Écouteurs
+// Événements
 button.addEventListener("click", addTask);
 input.addEventListener("keydown", (e) => {
   if (e.key === "Enter") addTask();
