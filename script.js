@@ -1,43 +1,82 @@
 const input = document.getElementById("taskInput");
 const button = document.getElementById("addTaskBtn");
 const list = document.getElementById("taskList");
+const filterButtons = document.querySelectorAll(".filters button");
 
-// Ajoute une tâche
+let tasks = [];
+
+// Charger les tâches du localStorage au démarrage
+window.onload = () => {
+  const saved = localStorage.getItem("tasks");
+  if (saved) {
+    tasks = JSON.parse(saved);
+    renderTasks();
+  }
+};
+
+// Ajouter une tâche
 function addTask() {
-  const taskText = input.value.trim();
-  if (taskText === "") return;
+  const text = input.value.trim();
+  if (text === "") return;
 
-  const li = document.createElement("li");
-
-  // Texte de la tâche (cliquable)
-  const span = document.createElement("span");
-  span.textContent = taskText;
-
-  // Marquage comme faite
-  span.addEventListener("click", () => {
-    span.classList.toggle("done");
-  });
-
-  // Bouton de suppression
-  const deleteBtn = document.createElement("button");
-  deleteBtn.textContent = "🗑️";
-  deleteBtn.className = "delete-btn";
-
-  deleteBtn.addEventListener("click", () => {
-    li.remove();
-  });
-
-  // Construction de l'élément
-  li.appendChild(span);
-  li.appendChild(deleteBtn);
-  list.appendChild(li);
-
+  tasks.push({ text, done: false });
   input.value = "";
+  saveAndRender();
 }
 
-button.addEventListener("click", addTask);
+// Sauvegarder dans localStorage
+function saveAndRender() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  renderTasks();
+}
 
-// Bonus : appuyer sur "Entrée" ajoute aussi une tâche
+// Afficher les tâches à l’écran
+function renderTasks(filter = "all") {
+  list.innerHTML = "";
+
+  tasks.forEach((task, index) => {
+    if (
+      (filter === "active" && task.done) ||
+      (filter === "done" && !task.done)
+    ) {
+      return; // Skip
+    }
+
+    const li = document.createElement("li");
+
+    const span = document.createElement("span");
+    span.textContent = task.text;
+    if (task.done) span.classList.add("done");
+
+    span.addEventListener("click", () => {
+      tasks[index].done = !tasks[index].done;
+      saveAndRender();
+    });
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "🗑️";
+    deleteBtn.className = "delete-btn";
+    deleteBtn.addEventListener("click", () => {
+      tasks.splice(index, 1);
+      saveAndRender();
+    });
+
+    li.appendChild(span);
+    li.appendChild(deleteBtn);
+    list.appendChild(li);
+  });
+}
+
+// Filtrage
+filterButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const filter = btn.dataset.filter;
+    renderTasks(filter);
+  });
+});
+
+// Écouteurs
+button.addEventListener("click", addTask);
 input.addEventListener("keydown", (e) => {
   if (e.key === "Enter") addTask();
 });

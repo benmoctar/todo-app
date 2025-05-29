@@ -57,3 +57,19 @@ span {
 .delete-btn:hover {
   color: red;
 }
+.filters {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.filters button {
+  flex: 1;
+  margin: 0 4px;
+  padding: 8px;
+  cursor: pointer;
+}
+
+.filters button:hover {
+  background-color: #e0e0e0;
+}
