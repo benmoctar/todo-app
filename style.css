@@ -29,9 +29,18 @@ ul {
 }
 
 li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 8px;
   border-bottom: 1px solid #ddd;
 }
+
+span {
+  flex: 1;
+  cursor: pointer;
+}
+
 .done {
   text-decoration: line-through;
   color: gray;
@@ -42,4 +51,9 @@ li {
   background-color: transparent;
   border: none;
   cursor: pointer;
+  font-size: 16px;
+}
+
+.delete-btn:hover {
+  color: red;
 }
